@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ASCII Art Web</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="error" type="text/html" href="">
+    <style>
+        .custom-box {
+            max-width: 1200px; /* Vous pouvez ajuster cette valeur selon vos besoins */
+            margin: 0 auto; /* Centrer la boîte horizontalement */
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center; /* Alignement horizontal */
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            background-color: #f5f5f5;
+            background-image: url(https://images2.alphacoders.com/100/1007648.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+
+           
+        }
+
+        h1 {
+            color: #000000;
+        }
+
+        .nav-tabs {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .nav-tabs .nav-link {
+            color: white;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #18791b;
+            color: white;
+        }
+
+        .tab-pane.fade {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .tab-pane.fade.show {
+            opacity: 1;
+        }
+
+        form {
+            margin-top: 50px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            padding: 5px;
+            width: 250px;
+        }
+
+        select {
+            padding: 5px;
+            width: 250px;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        h2 {
+            margin-top: 30px;
+        }
+
+        pre {
+            background-color: #e5e5e5;
+            padding: 20px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+    <script>
+
+        // Fonction pour récupérer la valeur saisie du texte lors de la soumission du formulaire
+        function onSubmitForm() {
+            var textInput = document.getElementById("text");
+            var textValue = textInput.value.replace(/\n/g, "\\n");
+
+            // Enregistrer la valeur saisie dans le stockage local (localStorage)
+            localStorage.setItem("textValue", textValue);
+            
+
+            // Récupérer la valeur choisie du banner
+            var bannerSelect = document.getElementById("banner");
+            var selectedBanner = bannerSelect.options[bannerSelect.selectedIndex].value;
+
+            // Enregistrer la valeur choisie dans le stockage local (localStorage)
+            localStorage.setItem("selectedBanner", selectedBanner);
+
+            // Enregistrer l'onglet actif dans le stockage local (localStorage)
+            var activeTab = document.querySelector(".nav-link.active");
+            var activeTabId = activeTab.getAttribute("aria-controls");
+            localStorage.setItem("activeTab", activeTabId);
+        }
+
+        // Fonction pour charger la valeur saisie précédente du texte et la valeur choisie du banner lors du chargement de la page
+        function loadFormValues() {
+            var textInput = document.getElementById("text");
+
+             
+                // Gestionnaire d'événement "keydown" pour détecter l'appui sur la touche "Entrée"
+                textInput.addEventListener("keydown", function(event) {
+                    if (event.key === "Enter") {
+                        event.preventDefault(); // Empêche le comportement par défaut (saut de ligne)
+
+                        // Ajouter un saut de ligne au contenu du champ de texte
+                        var currentText = textInput.value;
+                        var caretPos = textInput.selectionStart; // Position du curseur
+                        var newText = currentText.substring(0, caretPos) + "\n" + currentText.substring(caretPos);
+                        textInput.value = newText;
+
+                        // Déplacer le curseur après le saut de ligne
+                        textInput.selectionStart = caretPos + 1;
+                        textInput.selectionEnd = caretPos + 1;
+                    }
+                });
+
+            
+            var savedTextValue = localStorage.getItem("textValue");
+
+            if (savedTextValue) {
+                savedTextValue = savedTextValue.replaceAll("\\n", "\n"); // Convertir les "\n" en sauts de ligne
+                textInput.value = savedTextValue;
+            }
+
+            if (savedTextValue) {
+                textInput.value = savedTextValue;
+            }
+
+            var bannerSelect = document.getElementById("banner");
+            var savedSelectedBanner = localStorage.getItem("selectedBanner");
+
+            if (savedSelectedBanner) {
+                bannerSelect.value = savedSelectedBanner;
+            }
+
+            // Restaurer l'onglet actif depuis le stockage local (localStorage)
+            var activeTabId = localStorage.getItem("activeTab");
+
+            if (activeTabId) {
+                var activeTab = document.getElementById(activeTabId);
+                activeTab.classList.add("active");
+                activeTab.setAttribute("aria-selected", "true");
+
+                var activeTabPane = document.getElementById(activeTab.getAttribute("aria-controls"));
+                activeTabPane.classList.add("show", "active");
+            }
+        }
+        
+        function convertNewlines() {
+            var textInput = document.getElementById("text");
+            textInput.value = textInput.value.trim(); // Supprimer les espaces avant et après le texte
+            textInput.value = textInput.value.replace(/\n/g, "\\n"); // Remplacer les sauts de ligne par des caractères d'échappement
+
+            // Récupérer la valeur choisie du banner
+            var bannerSelect = document.getElementById("banner");
+            var selectedBanner = bannerSelect.options[bannerSelect.selectedIndex].value;
+
+            // Enregistrer la valeur saisie et le choix de la bannière dans le stockage local (localStorage)
+            localStorage.setItem("textValue", textInput.value);
+            localStorage.setItem("selectedBanner", selectedBanner);
+        }
+
+    </script>
+</head>
+<body onload="loadFormValues()">
+    <h1>ASCII Art Web</h1>
+    <h2>Welcome !</h2>
+    <p>Turn all your texts into ascii art. Have fun!</p>
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">ASCII ART</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="other-tab" data-toggle="tab" href="#other" role="tab" aria-controls="other" aria-selected="false">Author</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="tab3" data-toggle="tab" href="#content3" role="tab" aria-controls="content3" aria-selected="false">Audit</a>
+        </li>
+        
+    </ul>
+
+    <div class="tab-content" id="myTabContent">     
+        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <form action="/ascii-art" method="POST" onsubmit="convertNewlines()">
+                <label for="text">Text:</label>
+                <br>
+                <textarea id="text" name="text" cols="30" rows="5" required placeholder="Write your text here ..."></textarea>
+
+                <br><br>
+
+                <label for="banner">Banner:</label>
+                <br>
+                <select id="banner" name="banner" required class="custom-select">                    
+                    <option value="" disabled selected>Select your banner here</option>
+                    <option value="shadow">Shadow</option>
+                    <option value="standard">Standard</option>
+                    <option value="jojo">Jojo</option>
+                    <option value="thinkertoy">Thinkertoy</option>
+                </select>
+                <br><br>
+                <style>
+                    .custom-select { /* Pour le menu deroulant banner*/
+                        width: 300px; /* Ajustez la largeur selon vos préférences */
+                        height: auto;
+                        padding: 10px;
+                        font-size: 14px;
+                    }
+                </style>
+
+                <input type="submit" value="Generate ASCII Art">
+                <br><br>
+            </form>
+
+            {{ if .Result }}
+                <h2>Result:</h2>
+                <pre>{{ .Result }}</pre>
+            {{ end }}
+        </div>
+
+        <div class="tab-pane fade" id="other" role="tabpanel" aria-labelledby="other-tab">
+            <p>Developped by Johan, Matthieu and Maxime !</p>
+        </div>
+
+        <div class="tab-pane fade" id="content3" role="tabpanel" aria-labelledby="tab3">
+            <h2>Try inputting with the standard template/banner the following example:</h2>
+            <p>In the first line {123}</p>
+
+            <p>In the second line < Hello> (World)!</p>
+            <textarea id="text" name="text" cols="130" rows="15" readonly>
+                   __                     __    
+                / /  _   ____    _____  \ \   
+               | |  / | |___ \  |___ /   | |  
+              / /   | |   __) |   |_ \    \ \ 
+              \ \   | |  / __/   ___) |   / / 
+               | |  |_| |_____| |____/   | |  
+                \_\                     /_/   
+                                              
+                 __  _    _          _   _          __            __ __          __                 _       _  __    _  
+                / / | |  | |        | | | |         \ \          / / \ \        / /                | |     | | \ \  | | 
+               / /  | |__| |   ___  | | | |   ___    \ \        | |   \ \  /\  / /    ___    _ __  | |   __| |  | | | | 
+              < <   |  __  |  / _ \ | | | |  / _ \    > >       | |    \ \/  \/ /    / _ \  | '__| | |  / _` |  | | | | 
+               \ \  | |  | | |  __/ | | | | | (_) |  / /        | |     \  /\  /    | (_) | | |    | | | (_| |  | | |_| 
+                \_\ |_|  |_|  \___| |_| |_|  \___/  /_/         | |      \/  \/      \___/  |_|    |_|  \__,_|  | | (_) 
+                                                                 \_\                                           /_/      
+            </textarea>
+            <h2>Try to input 123?? using the template/banner standard.</h2>
+            <textarea id="text" name="text" cols="80" rows="9" readonly>
+                                    ___    ___   
+                _   ____    _____  |__ \  |__ \  
+               / | |___ \  |___ /     ) |    ) | 
+               | |   __) |   |_ \    / /    / /  
+               | |  / __/   ___) |  |_|    |_|   
+               |_| |_____| |____/   (_)    (_)   
+                                                 
+                                                                                                                                                
+            </textarea>
+            <h2>Try to input $% "= using the template/banner shadow.</h2>
+            <textarea id="text" name="text" cols="80" rows="9" readonly>
+
+                _|  _|            
+                _|   _|_|    _|       _|  _|            
+              _|_|_| _|_|  _|                _|_|_|_|_| 
+              _|_|       _|                             
+                _|_|   _|  _|_|              _|_|_|_|_| 
+              _|_|_| _|    _|_|                         
+                _|                                      
+                                                        
+            </textarea>
+            <h2>Try to input 123 T/fs#R using the template/banner thinkertoy.</h2>
+            <textarea id="text" name="text" cols="80" rows="9" readonly>
+
+                0    --  o-o        o-O-o     o  o-o      | |  o--o  
+                /|   o  o    |         |      /   |       -O-O- |   | 
+               o |     /   oo          |     o   -O-  o-o  | |  O-Oo  
+                 |    /      |         |    /     |    \  -O-O- |  \  
+               o-o-o o--o o-o          o   o      o   o-o  | |  o   o 
+                                                                      
+                                                                      
+            </textarea>
+        </div>
+
+               
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
